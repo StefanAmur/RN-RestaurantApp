@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import yelp from '../api/yelp';
 import SearchBar from '../components/SearchBar';
 import useResults from '../hooks/useResults';
 import ResultsList from '../components/ResultsList';
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
   const [term, setTerm] = useState('');
   const [searchApi, results, errorMessage] = useResults();
 
@@ -16,22 +16,27 @@ const SearchScreen = () => {
   };
 
   return (
-    <View>
+    <>
       <SearchBar
         term={term}
         onTermChange={setTerm}
         onTermSubmit={() => searchApi(term)}
       />
       {errorMessage ? <Text>{errorMessage}</Text> : null}
-      <Text>We have found {results.length} results</Text>
 
-      <ResultsList results={filterResultsByPrice('€')} title="Cost Effective" />
-      <ResultsList results={filterResultsByPrice('€€')} title="Balanced" />
-      <ResultsList results={filterResultsByPrice('€€€')} title="Big Spender" />
-    </View>
+      <ScrollView>
+        <ResultsList results={filterResultsByPrice('€')} title="Cost Effective" navigation={navigation} />
+        <ResultsList results={filterResultsByPrice('€€')} title="Balanced" navigation={navigation} />
+        <ResultsList results={filterResultsByPrice('€€€')} title="Big Spender" navigation={navigation} />
+      </ScrollView>
+    </>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  totalResults: {
+    marginLeft: 14,
+  }
+});
 
 export default SearchScreen;
